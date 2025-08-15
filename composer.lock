@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-    "content-hash": "d1077af8ca201df32baa6d36cc15bfef",
-=======
-    "content-hash": "11a661270da8540d8e65c96bc149f0d8",
->>>>>>> origin/codex/create-slim-4-starter-template-with-twig
+    "content-hash": "05cb34d613289f730837c88211c12182",
     "packages": [
         {
             "name": "bepsvpt/secure-headers",
