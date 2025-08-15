@@ -11,6 +11,4 @@ composer.phar
 !/storage/cache/.gitkeep
 /storage/uploads/*
 !/storage/uploads/.gitkeep
-/var/logs/*
-!/var/logs/.gitkeep
 /vendor/
