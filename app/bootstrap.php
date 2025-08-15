@@ -10,7 +10,6 @@ use Bepsvpt\SecureHeaders\SecureHeaders;
 use App\Middleware\SecureHeadersMiddleware;
 use App\Middleware\CspMiddleware;
 use App\Middleware\CsrfGuardMiddleware;
-use Throwable;
 use Nyholm\Psr7\Response;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -41,7 +40,10 @@ $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
 
 $app->add(new CorsMiddleware());
-$secureHeaders = new SecureHeaders([
+
+$defaultSecureHeadersConfig = require __DIR__ . '/../vendor/bepsvpt/secure-headers/config/secure-headers.php';
+
+$secureHeadersConfig = array_replace_recursive($defaultSecureHeadersConfig, [
     'hsts' => [
         'enable' => true,
         'max-age' => 31536000,
@@ -49,6 +51,8 @@ $secureHeaders = new SecureHeaders([
     ],
     'csp' => ['enable' => false],
 ]);
+
+$secureHeaders = new SecureHeaders($secureHeadersConfig);
 $app->add(new SecureHeadersMiddleware($secureHeaders));
 $app->add(CspMiddleware::class);
 $app->add($container->get(CsrfGuardMiddleware::class));
@@ -58,7 +62,7 @@ $errorMiddleware = $app->addErrorMiddleware(
     true,
     true
 );
-$errorMiddleware->setDefaultErrorHandler(function ($request, Throwable $exception) {
+$errorMiddleware->setDefaultErrorHandler(function ($request, \Throwable $exception) {
     $response = new Response(500);
     $response->getBody()->write('An internal error occurred.');
     return $response;
