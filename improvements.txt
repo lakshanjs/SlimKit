@@ -1,0 +1,26 @@
+Issues, bugs, and potential improvements for SlimKit:
+
+1. **Deprecation warnings from PHP-DI**: Running `composer test` shows deprecation warnings for `DI\create()` and `DI\autowire()` implicitly marking parameters as nullable. Update dependency injection configuration to use explicit nullable types or adjust usage to remove the warnings.
+
+2. **Code style deviations**: `vendor/bin/php-cs-fixer --dry-run` reports style issues in several files:
+   - app/Controllers/FileController.php
+   - app/Controllers/AuthController.php
+   - app/Services/Upload.php
+   - app/Services/Auth.php
+   - app/Middleware/CspMiddleware.php
+   - app/Support/Crypto.php
+   - app/View/TwigExtensions.php
+   - tests/Unit/ExampleTest.php
+   - tests/Feature/ExampleTest.php
+   Running the fixer will normalize formatting and adherence to the configured coding standards.
+
+3. **Session management**: `App\Services\Auth` interacts directly with `$_SESSION`. Encapsulating session handling behind an interface or a dedicated session service would improve testability and flexibility.
+
+4. **File upload validation**: `App\Services\Upload` and `FileController` perform minimal validation. Consider checking MIME types, restricting file extensions, and handling errors from `UploadedFileInterface::moveTo()` to prevent security issues or failed uploads.
+
+5. **Limited test coverage**: Only basic example tests exist. Adding tests for controllers, services, middleware, and edge cases will increase confidence in the codebase and catch regressions.
+
+6. **Database error handling**: `App\Services\Auth` assumes the user query succeeds. Implement error handling for database interactions and use typed fetches (`fetch(PDO::FETCH_ASSOC)`) for clarity.
+
+7. **Configuration and documentation**: Expand configuration validation (e.g., ensure required env variables are present) and enrich the README with setup, deployment and security considerations.
+
