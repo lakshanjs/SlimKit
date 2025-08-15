@@ -12,9 +12,9 @@
         "twig/twig": "^3.8",
         "slim/twig-view": "^3.3",
         "respect/validation": "^2.2",
-        "selective/csrf": "^2.0",
-        "middlewares/cors": "^1.1",
-        "middlewares/secure-headers": "^1.2",
+        "slim/csrf": "^1.0",
+        "tuupola/cors-middleware": "^1.3",
+        "bepsvpt/secure-headers": "^9.0",
         "monolog/monolog": "^3.5"
     },
     "require-dev": {

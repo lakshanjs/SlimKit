@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use DI\Container;
@@ -13,12 +14,12 @@ use Monolog\Processor\PsrLogMessageProcessor;
 use Slim\Views\Twig;
 use App\Middleware\CsrfGuardMiddleware;
 use App\View\TwigExtensions;
-use Selective\Csrf\CsrfMiddleware;
+use Slim\Csrf\Guard;
 
 return [
-    Psr17Factory::class => fn() => new Psr17Factory(),
-    ResponseFactoryInterface::class => fn(ContainerInterface $c) => $c->get(Psr17Factory::class),
-    StreamFactoryInterface::class => fn(ContainerInterface $c) => $c->get(Psr17Factory::class),
+    Psr17Factory::class => fn () => new Psr17Factory(),
+    ResponseFactoryInterface::class => fn (ContainerInterface $c) => $c->get(Psr17Factory::class),
+    StreamFactoryInterface::class => fn (ContainerInterface $c) => $c->get(Psr17Factory::class),
 
     PDO::class => function (ContainerInterface $c) {
         $settings = $c->get('settings')['db'];
@@ -53,9 +54,9 @@ return [
     },
 
     CsrfGuardMiddleware::class => function (ContainerInterface $c) {
-        $csrf = new CsrfMiddleware($c->get(ResponseFactoryInterface::class));
-        return new CsrfGuardMiddleware($csrf);
+        $guard = new Guard($c->get(ResponseFactoryInterface::class));
+        return new CsrfGuardMiddleware($guard);
     },
 
-    TwigExtensions::class => fn(ContainerInterface $c) => new TwigExtensions($c->get(CsrfGuardMiddleware::class)),
+    TwigExtensions::class => fn (ContainerInterface $c) => new TwigExtensions($c->get(CsrfGuardMiddleware::class)),
 ];

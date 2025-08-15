@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface as Handler;
-use Slim\Psr7\Response;
+use Nyholm\Psr7\Response;
 
 class AuthMiddleware
 {
@@ -14,7 +15,7 @@ class AuthMiddleware
     {
     }
 
-    public function __invoke(Request $request, Handler $handler): Response
+    public function __invoke(Request $request, Handler $handler): ResponseInterface
     {
         if (!isset($_SESSION['user_id'])) {
             $response = new Response();

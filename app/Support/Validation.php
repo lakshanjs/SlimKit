@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Support;
@@ -14,7 +15,7 @@ class Validation
             try {
                 $rule->setName(ucfirst($field))->assert($data[$field] ?? null);
             } catch (ValidationException $e) {
-                $errors[$field] = $e->getMessages();
+                $errors[$field] = $e->getMessage();
             }
         }
         return $errors;

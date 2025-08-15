@@ -1,17 +1,19 @@
 <?php
+
 declare(strict_types=1);
 
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Dotenv\Dotenv;
-use Middlewares\Cors;
-use Middlewares\SecureHeaders;
+use Tuupola\Middleware\CorsMiddleware;
+use Bepsvpt\SecureHeaders\SecureHeaders;
+use App\Middleware\SecureHeadersMiddleware;
 use App\Middleware\CspMiddleware;
 use App\Middleware\CsrfGuardMiddleware;
 use Psr\Container\ContainerInterface;
 use Monolog\Logger;
 use Throwable;
-use Slim\Psr7\Response;
+use Nyholm\Psr7\Response;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -40,11 +42,16 @@ session_start();
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
 
-$app->add(new Cors());
-$app->add(new SecureHeaders([
-    'content-security-policy' => false,
-    'strict-transport-security' => 'max-age=31536000; includeSubDomains',
-]));
+$app->add(new CorsMiddleware());
+$secureHeaders = new SecureHeaders([
+    'hsts' => [
+        'enable' => true,
+        'max-age' => 31536000,
+        'include-sub-domains' => true,
+    ],
+    'csp' => ['enable' => false],
+]);
+$app->add(new SecureHeadersMiddleware($secureHeaders));
 $app->add(CspMiddleware::class);
 $app->add($container->get(CsrfGuardMiddleware::class));
 
