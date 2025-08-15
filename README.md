@@ -12,7 +12,6 @@ Slim 4 starter kit for building REST APIs and server rendered pages with Twig.
 - CORS middleware for APIs
 - Secure headers and CSP with per-request nonces
 - Validation using Respect/Validation
-- Logging with Monolog and sensitive-field redaction
 - Error handling hides details in production
 - Environment variables via vlucas/phpdotenv
 - Example auth and file upload workflows
@@ -41,11 +40,8 @@ composer analyse
 composer fix -- --dry-run
 ```
 
-Logs are written to `var/logs/app.log`.
-
 ## Security Notes
 
 - HTTPS is enforced via `SecureHeaders` and HSTS (configure your web server for TLS).
 - CSP uses per-request nonces exposed to Twig templates through `csp_nonce`.
 - Sessions use secure, HTTP only cookies.
-- Monolog processors redact `password` and `token` fields from logs.

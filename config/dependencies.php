@@ -7,10 +7,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Monolog\Processor\UidProcessor;
-use Monolog\Processor\PsrLogMessageProcessor;
 use Slim\Views\Twig;
 use App\Middleware\CsrfGuardMiddleware;
 use App\View\TwigExtensions;
@@ -30,23 +26,6 @@ return [
         return $pdo;
     },
 
-    Logger::class => function (ContainerInterface $c) {
-        $logPath = $c->get('settings')['logPath'];
-        $logger = new Logger('app');
-        $handler = new StreamHandler($logPath, Logger::DEBUG);
-        $logger->pushHandler($handler);
-        $logger->pushProcessor(new UidProcessor());
-        $logger->pushProcessor(new PsrLogMessageProcessor());
-        $logger->pushProcessor(function (array $record) {
-            foreach (['password', 'token'] as $key) {
-                if (isset($record['context'][$key])) {
-                    $record['context'][$key] = '[redacted]';
-                }
-            }
-            return $record;
-        });
-        return $logger;
-    },
 
     Twig::class => function (ContainerInterface $c) {
         $settings = $c->get('settings')['twig'];

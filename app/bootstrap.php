@@ -10,8 +10,6 @@ use Bepsvpt\SecureHeaders\SecureHeaders;
 use App\Middleware\SecureHeadersMiddleware;
 use App\Middleware\CspMiddleware;
 use App\Middleware\CsrfGuardMiddleware;
-use Psr\Container\ContainerInterface;
-use Monolog\Logger;
 use Throwable;
 use Nyholm\Psr7\Response;
 
@@ -60,9 +58,7 @@ $errorMiddleware = $app->addErrorMiddleware(
     true,
     true
 );
-$errorMiddleware->setDefaultErrorHandler(function ($request, Throwable $exception) use ($container) {
-    $logger = $container->get(Logger::class);
-    $logger->error($exception->getMessage(), ['exception' => $exception]);
+$errorMiddleware->setDefaultErrorHandler(function ($request, Throwable $exception) {
     $response = new Response(500);
     $response->getBody()->write('An internal error occurred.');
     return $response;
