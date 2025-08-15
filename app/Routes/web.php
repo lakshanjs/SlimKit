@@ -1,7 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 use Slim\App;
+use Slim\Routing\RouteCollectorProxy;
 use App\Controllers\AuthController;
 use App\Controllers\FileController;
 use App\Middleware\AuthMiddleware;
@@ -17,9 +19,9 @@ return function (App $app): void {
     $app->post('/login', [AuthController::class, 'login']);
     $app->get('/logout', [AuthController::class, 'logout']);
 
-    $app->group('', function (App $app) {
-        $app->get('/files/upload', [FileController::class, 'showForm']);
-        $app->post('/files/upload', [FileController::class, 'upload']);
+    $app->group('', function (RouteCollectorProxy $group) {
+        $group->get('/files/upload', [FileController::class, 'showForm']);
+        $group->post('/files/upload', [FileController::class, 'upload']);
     })->add(AuthMiddleware::class);
 
     $app->get('/api/ping', function ($request, $response) {
