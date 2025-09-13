@@ -11,19 +11,27 @@ use Slim\Views\Twig;
 use App\Middleware\CsrfGuardMiddleware;
 use App\View\TwigExtensions;
 use Slim\Csrf\Guard;
+use LakshanJS\PdoDb\PdoDb;
 
 return [
     Psr17Factory::class => fn () => new Psr17Factory(),
     ResponseFactoryInterface::class => fn (ContainerInterface $c) => $c->get(Psr17Factory::class),
     StreamFactoryInterface::class => fn (ContainerInterface $c) => $c->get(Psr17Factory::class),
 
-    PDO::class => function (ContainerInterface $c) {
+    PdoDb::class => function (ContainerInterface $c) {
         $settings = $c->get('settings')['db'];
-        $pdo = new PDO($settings['dsn'], $settings['username'], $settings['password'], [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        $dsn = $settings['dsn'] ?? '';
+        $params = [];
+        $dsnParams = substr($dsn, strpos($dsn, ':') + 1);
+        parse_str(str_replace(';', '&', $dsnParams), $params);
+
+        return new PdoDb([
+            'host'     => $params['host'] ?? '',
+            'db'       => $params['dbname'] ?? '',
+            'username' => $settings['username'] ?? '',
+            'password' => $settings['password'] ?? '',
+            'charset'  => 'utf8mb4',
         ]);
-        return $pdo;
     },
 
 
