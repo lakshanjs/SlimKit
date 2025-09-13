@@ -11,6 +11,10 @@ use App\Middleware\SecureHeadersMiddleware;
 use App\Middleware\CspMiddleware;
 use App\Middleware\CsrfGuardMiddleware;
 use Nyholm\Psr7\Response;
+use Psr\Http\Message\ServerRequestInterface;
+use Whoops\Handler\JsonResponseHandler;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -65,9 +69,32 @@ $errorMiddleware = $app->addErrorMiddleware(
     true,
     true
 );
-$errorMiddleware->setDefaultErrorHandler(function ($request, \Throwable $exception) {
+$errorMiddleware->setDefaultErrorHandler(function (ServerRequestInterface $request, \Throwable $exception) use ($container) {
     $response = new Response(500);
+
+    $env = $container->get('settings')['env'] ?? 'production';
+
+    if ($env === 'development') {
+        $whoops = new Run();
+        if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
+            $handler = new JsonResponseHandler();
+            $handler->addTraceToOutput(true);
+        } else {
+            $handler = new PrettyPageHandler();
+        }
+
+        $whoops->pushHandler($handler);
+        $whoops->allowQuit(false);
+        $whoops->writeToOutput(false);
+
+        $response->getBody()->write($whoops->handleException($exception));
+        $contentType = $handler instanceof JsonResponseHandler ? 'application/json' : 'text/html';
+
+        return $response->withHeader('Content-Type', $contentType);
+    }
+
     $response->getBody()->write('An internal error occurred.');
+
     return $response;
 });
 
