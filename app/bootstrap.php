@@ -26,10 +26,7 @@ $container = $containerBuilder->build();
 
 AppFactory::setContainer($container);
 $app = AppFactory::create();
-// Dynamically determine the application's base path so it can run
-// from a domain root (e.g. https://tglocker.local) or from a
-// subdirectory such as http://localhost/slimkit/public.
-// This allows the router to generate correct URLs in both setups.
+// Dynamically determine the application's base path 
 $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
 $app->setBasePath($basePath);
 
