@@ -9,7 +9,7 @@ SlimKit is a starter kit for building full featured applications with [Slim 4](h
 - Native sessions secured with HTTP-only cookies
 - CSRF protection, secure headers and CORS middleware
 - Validation via `respect/validation`
-- PDO database access (no ORM)
+- Database access via `lakshanjs/pdodb`
 - Example authentication and file upload flows
 - Environment configuration using `vlucas/phpdotenv`
 - PHPUnit, PHPStan and PHP-CS-Fixer configurations
