@@ -1,22 +1,23 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
 
-use PDO;
+use LakshanJS\PdoDb\PdoDb;
 use App\Support\Crypto;
 
 class Auth
 {
-    public function __construct(private PDO $pdo)
+    public function __construct(private PdoDb $db)
     {
     }
 
     public function attempt(string $username, string $password): bool
     {
-        $stmt = $this->pdo->prepare('SELECT id, password FROM users WHERE username = :username');
-        $stmt->execute(['username' => $username]);
-        $user = $stmt->fetch();
+        $user = $this->db
+            ->where('username', $username)
+            ->getOne('users', ['id', 'password']);
         if ($user && Crypto::verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             return true;
